@@ -1,120 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script type="module">
-        // Here go all improts:
-        import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+    <title>Graphics Project - Jur Stedehouder en Mark Hooijberg</title>
+    <link rel="stylesheet" type="text/css" href="stylesheet/index.css" />
+  </head>
+  <body>
+    <canvas id="displayCanvas"></canvas>
 
-        // All classes go here:
+    <!-- Link to Three.js and usefull scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-
-        // Main function:
-        function main() {
-            // General constants:
-            const canvas = document.querySelector('#c');
-            const renderer = new THREE.WebGLRenderer({ canvas });
-            const scene = new THREE.Scene();
-            // Camera Settings:
-            const fov = 75;
-            const aspect = 2;  // the canvas default
-            const near = 0.1;
-            const far = 5;
-            const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-            camera.position.z = 2;
-
-            // Light settings
-            {
-                const color = 0xFFFFFF;
-                const intensity = 1;
-                const light = new THREE.DirectionalLight(color, intensity);
-                light.position.set(-1, 2, 4);
-                scene.add(light);
-            }
-
-
-
-
-
-            function resizeRendererToDisplaySize(renderer) {
-                const canvas = renderer.domElement;
-                const width = canvas.clientWidth;
-                const height = canvas.clientHeight;
-                const needResize = canvas.width !== width || canvas.height !== height;
-                if (needResize) {
-                    renderer.setSize(width, height, false);
-                }
-                return needResize;
-            }
-
-            function render(time) {
-                // Convert the current milliseconds time variable to seconds.
-                time *= 0.001;
-
-                if (resizeRendererToDisplaySize(renderer)) {
-                    const canvas = renderer.domElement;
-                    camera.aspect = canvas.clientWidth / canvas.clientHeight;
-                    camera.updateProjectionMatrix();
-                }
-
-                const canvas = renderer.domElement;
-                camera.aspect = canvas.clientWidth / canvas.clientHeight;
-                camera.updateProjectionMatrix();
-
-                renderer.render(scene, camera);
-                requestAnimationFrame(render);
-            }
-            requestAnimationFrame(render);
-        }
-        main();
-    </script>
-    <script>
-        /* Unused code that could be used for examples:
-        // A Box class to define a new box with dimensions, position and color. And add them to the scene.
-        class Box {
-            constructor(color = 0x49ef4, width = 1, height = 1, depth = 1, x = 0, y = 0, z = 0) {
-                this.color = color;
-                this.x = x;
-                this.y = y;
-                this.z = z;
-                this.geometry = new THREE.BoxGeometry(width, height, depth);
-            }
-            makeInstance(scene) {
-                const color = this.color;
-                const material = new THREE.MeshPhongMaterial({ color });
-                const cube = new THREE.Mesh(this.geometry, material);
-
-                scene.add(cube);
-
-                cube.position.x = this.x;
-                cube.position.y = this.y;
-                cube.position.z = this.z;
-                return cube;
-            }
-        }
-
-        // Create and add box to the scene.
-            const cubes = [new Box(0x8844aa, 1, 1, 1, -2).makeInstance(scene)];
-
-        // Rotate cubes out of the cubes list:
-            cubes.forEach((cube, ndx) => {
-                const speed = 1 + ndx * .1;
-                const rot = time * speed;
-                cube.rotation.x = rot;
-                cube.rotation.y = rot;
-            });
-        */
-    </script>
-</head>
-
-<body>
-    <canvas id="c" style="height: 100%; width: 100%; position: absolute; top:0; left:0;">
-
-    </canvas>
-</body>
-
+    <!-- Connection to our own scripts starting from the deepest dependency -->
+    <script src="javascript/gameManager.js"></script>
+    <script src="javascript/main.js"></script>
+  </body>
 </html>
