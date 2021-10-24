@@ -12,13 +12,13 @@ function GameManager(canvas)
     camera.position.z = 2;
 
     // Light settings
-    {
-        const color = 0xFFFFFF;
-        const intensity = 1;
-        const light = new THREE.DirectionalLight(color, intensity);
-        light.position.set(-1, 2, 4);
-        scene.add(light);
-    }
+    // {
+    //     const color = 0xFFFFFF;
+    //     const intensity = 1;
+    //     const light = new THREE.DirectionalLight(color, intensity);
+    //     light.position.set(-1, 2, 4);
+    //     scene.add(light);
+    // }
 
     function makeInstance(scene, boxcolor = 0x49ef4, width = 1, height = 1, depth = 1, x = 0, y = 0, z = 0) {
         const color = boxcolor;
@@ -81,7 +81,16 @@ function GameManager(canvas)
     }
 
     function setupLighting(){
-
+        
+        const color = 0xFFFFFF;
+        const intensity = 1;
+        const light = new THREE.DirectionalLight(color, intensity);
+        light.castShadow = true;
+        light.position.set(0, 10, 10);
+        light.target.position.set(-4, 0, -4);
+        scene.add(light);
+        scene.add(light.target);
+    
     }
 
     function setupScene(){
