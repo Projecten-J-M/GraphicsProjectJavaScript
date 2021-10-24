@@ -73,7 +73,8 @@ function GameManager(canvas)
     }
 
     this.update = function()
-    {        
+    {
+        frameStartTime = new Date().getTime();
         // Custom time function, could be used to calculate new positions, rotations etc.
         deltaTime = (new Date().getTime()) - startTime;
         deltaTime *= 0.001;
@@ -87,7 +88,7 @@ function GameManager(canvas)
         });
         
        renderer.render(scene, camera);
-       
+       frameEndTime = (new Date().getTime()) - frameStartTime;
        /*
        // Input system test:
        console.log("Action: Shoot, Status: " + action.Shoot);
@@ -96,7 +97,9 @@ function GameManager(canvas)
        console.log("Action: Forward, Status: " + action.Forward);
        console.log("Action: Right, Status: " + action.Right);
        */
-        console.log(deltaTime);
+      // Time test
+      //console.log(deltaTime);
+      console.log("FPS: " + 1000/frameEndTime);
     }
 
 }

@@ -50,6 +50,6 @@ function renderGame(){
 
 function resizeCanvas()
 {
-    
+    // ToDo: This doesn't work yet, try to resize the window.    
     gameManager.resize();
 }
