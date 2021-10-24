@@ -39,6 +39,10 @@ function GameManager(canvas)
     var startTime = new Date().getTime();
     const action = {Shoot:false,Left:false,Backward:false,Forward:false,Right:false}
 
+    setupScene();
+    setupLighting();
+    setupCamera();
+
     this.handleInput = function(inputCode, isDown)
     {
         switch (inputCode){
@@ -72,34 +76,47 @@ function GameManager(canvas)
         camera.updateProjectionMatrix();
     }
 
+    function setupCamera(){
+        
+    }
+
+    function setupLighting(){
+
+    }
+
+    function setupScene(){
+
+    }
+
     this.update = function()
     {
         frameStartTime = new Date().getTime();
         // Custom time function, could be used to calculate new positions, rotations etc.
         deltaTime = (new Date().getTime()) - startTime;
         deltaTime *= 0.001;
-
-        // Rotate cubes out of the cubes list:
-        cubes.forEach((cube, ndx) => {
-            const speed = 1 + ndx * .1;
-            const rot = deltaTime * speed;
-            cube.rotation.x = rot;
-            cube.rotation.y = rot;
-        });
-        
+        if (action.Forward == true)
+        {
+            // Rotate cubes out of the cubes list:
+            cubes.forEach((cube, ndx) => {
+                const speed = 1 + ndx * .1;
+                const rot = deltaTime * speed;
+                cube.rotation.x = rot;
+                cube.rotation.y = rot;
+            });
+        }
        renderer.render(scene, camera);
        frameEndTime = (new Date().getTime()) - frameStartTime;
-       /*
+       
        // Input system test:
-       console.log("Action: Shoot, Status: " + action.Shoot);
-       console.log("Action: Left, Status: " + action.Left);
-       console.log("Action: Backward, Status: " + action.Backward);
-       console.log("Action: Forward, Status: " + action.Forward);
-       console.log("Action: Right, Status: " + action.Right);
-       */
+       //console.log("Action: Shoot, Status: " + action.Shoot);
+       //console.log("Action: Left, Status: " + action.Left);
+       //console.log("Action: Backward, Status: " + action.Backward);
+       //console.log("Action: Forward, Status: " + action.Forward);
+       //console.log("Action: Right, Status: " + action.Right);
+       
       // Time test
-      //console.log(deltaTime);
-      console.log("FPS: " + 1000/frameEndTime);
+      console.log(deltaTime);
+      //console.log("FPS: " + 1000/frameEndTime);
     }
 
 }
