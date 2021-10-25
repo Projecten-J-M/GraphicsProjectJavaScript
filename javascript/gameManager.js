@@ -51,7 +51,16 @@ function GameManager(canvas)
     }
 
     function setupLighting(){
-
+        
+        const color = 0xFFFFFF;
+        const intensity = 1;
+        const light = new THREE.DirectionalLight(color, intensity);
+        light.castShadow = true;
+        light.position.set(0, 10, 10);
+        light.target.position.set(-4, 0, -4);
+        scene.add(light);
+        scene.add(light.target);
+    
     }
 
     function setupScene(){
