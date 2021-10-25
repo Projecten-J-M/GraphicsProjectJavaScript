@@ -1,41 +1,5 @@
 function GameManager(canvas)
 {
-    // ==== Temporary Stuff ====
-    const renderer = new THREE.WebGLRenderer({ canvas });
-    const scene = new THREE.Scene();
-    // Camera Settings:
-    const fov = 75;
-    const aspect = 2;  // the canvas default
-    const near = 0.1;
-    const far = 5;
-    const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    camera.position.z = 2;
-
-    // Light settings
-    {
-        const color = 0xFFFFFF;
-        const intensity = 1;
-        const light = new THREE.DirectionalLight(color, intensity);
-        light.position.set(-1, 2, 4);
-        scene.add(light);
-    }
-
-    function makeInstance(scene, boxcolor = 0x49ef4, width = 1, height = 1, depth = 1, x = 0, y = 0, z = 0) {
-        const color = boxcolor;
-        const material = new THREE.MeshPhongMaterial({ color });
-        const geometry = new THREE.BoxGeometry(width, height, depth);
-        const cube = new THREE.Mesh(geometry, material);
-
-        scene.add(cube);
-
-        cube.position.x = x;
-        cube.position.y = y;
-        cube.position.z = z;
-        return cube;
-    }
-    const cubes = [makeInstance(scene, 0x8844aa, 1, 1, 1, 0, 0, 0)];
-    // ==== End of Temporary Stuff ====
-
     var startTime = new Date().getTime();
     const action = {Shoot:false,Left:false,Backward:false,Forward:false,Right:false}
 
@@ -76,8 +40,14 @@ function GameManager(canvas)
         camera.updateProjectionMatrix();
     }
 
+    // ToDo: Rewrite function more efficient.
     function setupCamera(){
-        
+        const fov = 75;
+        const aspect = 2;  // the canvas default
+        const near = 0.1;
+        const far = 5;
+        const camera = new THREE.PerspectiveCamera(fov, apsectRatio, nearClip, farClip);
+        return camera;
     }
 
     function setupLighting(){
@@ -85,6 +55,8 @@ function GameManager(canvas)
     }
 
     function setupScene(){
+        this.renderer = new THREE.WebGLRenderer({ canvas });
+        this.scene = new THREE.Scene();
 
     }
 
