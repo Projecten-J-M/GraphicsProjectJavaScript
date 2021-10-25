@@ -47,7 +47,7 @@ function GameManager(canvas)
         const near = 0.1;
         const far = 5;
         const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-        return camera;
+        this.camera = camera;
     }
 
     function setupLighting(){
@@ -95,7 +95,7 @@ function GameManager(canvas)
        //console.log("Action: Right, Status: " + action.Right);
        
       // Time test
-      console.log(deltaTime);
+      //console.log(deltaTime);
       //console.log("FPS: " + 1000/frameEndTime);
     }
 
