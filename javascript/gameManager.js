@@ -46,7 +46,7 @@ function GameManager(canvas)
         const aspect = 2;  // the canvas default
         const near = 0.1;
         const far = 5;
-        const camera = new THREE.PerspectiveCamera(fov, apsectRatio, nearClip, farClip);
+        const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
         return camera;
     }
 
@@ -66,7 +66,6 @@ function GameManager(canvas)
     function setupScene(){
         this.renderer = new THREE.WebGLRenderer({ canvas });
         this.scene = new THREE.Scene();
-
     }
 
     this.update = function()
