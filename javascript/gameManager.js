@@ -1,41 +1,5 @@
 function GameManager(canvas)
 {
-    // ==== Temporary Stuff ====
-    const renderer = new THREE.WebGLRenderer({ canvas });
-    const scene = new THREE.Scene();
-    // Camera Settings:
-    const fov = 75;
-    const aspect = 2;  // the canvas default
-    const near = 0.1;
-    const far = 5;
-    const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    camera.position.z = 2;
-
-    // Light settings
-    // {
-    //     const color = 0xFFFFFF;
-    //     const intensity = 1;
-    //     const light = new THREE.DirectionalLight(color, intensity);
-    //     light.position.set(-1, 2, 4);
-    //     scene.add(light);
-    // }
-
-    function makeInstance(scene, boxcolor = 0x49ef4, width = 1, height = 1, depth = 1, x = 0, y = 0, z = 0) {
-        const color = boxcolor;
-        const material = new THREE.MeshPhongMaterial({ color });
-        const geometry = new THREE.BoxGeometry(width, height, depth);
-        const cube = new THREE.Mesh(geometry, material);
-
-        scene.add(cube);
-
-        cube.position.x = x;
-        cube.position.y = y;
-        cube.position.z = z;
-        return cube;
-    }
-    const cubes = [makeInstance(scene, 0x8844aa, 1, 1, 1, 0, 0, 0)];
-    // ==== End of Temporary Stuff ====
-
     var startTime = new Date().getTime();
     const action = {Shoot:false,Left:false,Backward:false,Forward:false,Right:false}
 
@@ -69,6 +33,67 @@ function GameManager(canvas)
         }
     }
 
+    function loadMap(){
+        loadGLTFObject("../assets/models/Arches.glb", "../assets/textures/ArchesDiffuse.png", "../assets/textures/ArchesNormals.png", 17.5466, 0.5125, -37.0221);
+        loadGLTFObject("../assets/models/Base.glb");
+        loadGLTFObject("../assets/models/Bat.glb", "../assets/textures/BatDiffuse.png", "../assets/textures/BatNormals.png", 0.635387, 5.30846, -40.9824);
+        loadGLTFObject("../assets/models/Blox.glb", "../assets/textures/BloxDiffuse.png", null, 36.9583, 0.798581, -24.6742);
+        loadGLTFObject("../assets/models/Clock.glb", "../assets/textures/ClockDiffuse.png", "../assets/textures/ClockNormals.png", 3.62922, 0, -19.8345);
+        loadGLTFObject("../assets/models/DollArm.glb", "../assets/textures/DollArmDiffuse.png", "../assets/textures/DollArmNormals.png", 43.6546, 0, -35.9031);
+        loadGLTFObject("../assets/models/Dollhouse.glb", "../assets/textures/DollhouseDiffuse.png", "../assets/textures/DollhouseNormals.png", 34.3578, 0, -3.36421);
+        loadGLTFObject("../assets/models/Drawers.glb", "../assets/textures/DrawersDiffuse.png", "../assets/textures/DrawersNormals.png", 4.3, 0, -10.4121);
+        loadGLTFObject("../assets/models/Firetruck.glb", "../assets/textures/FiretruckDiffuse.png", "../assets/textures/FiretruckNormals.png", 7.53786, 0.769853, -36.8926);
+        loadGLTFObject("../assets/models/Hearse.glb", "../assets/textures/HearseDiffuse.png", "../assets/textures/HearseNormals.png", 13.4313, 1.94064, -24.6359);
+        loadGLTFObject("../assets/models/Planks.glb", "../assets/textures/PlanksDiffuse.png", "../assets/textures/PlanksNormals.png");
+        loadGLTFObject("../assets/models/Robot.glb", "../assets/textures/RobotDiffuse.png", "../assets/textures/RobotNormals.png", 22.9302, 0, -10.5714);
+        loadGLTFObject("../assets/models/Sides.glb");
+        loadGLTFObject("../assets/models/SpinningTop.glb", "../assets/textures/SpinningTopDiffuse.png", "../assets/textures/SpinningTopNormals.png", 24.6155, 0.440388, -18.6914);
+        loadGLTFObject("../assets/models/Stars.glb");
+        loadGLTFObject("../assets/models/Stool.glb", "../assets/textures/StoolDiffuse.png", "../assets/textures/StoolNormals.png", 31.1626, 4.37695, -40.1877);
+        loadGLTFObject("../assets/models/Train.glb", "../assets/textures/TrainDiffuse.png", "../assets/textures/TrainNormals.png", 37.2807, 0, -16.0358);
+        loadGLTFObject("../assets/models/Wall.glb", "../assets/textures/WallDiffuse.png", "../assets/textures/WallNormals.png");
+    }
+
+    function loadPlayer(){
+
+    }
+
+    function loadGLTFObject(modelPath, texturePath = null, normalPath = null, x = 0, y = 0, z = 0, rotX = 0, rotY = 0, rotZ = 0, scaleX = 1, scaleY = 1, scaleZ = 1){        
+        var modelLoader = new THREE.GLTFLoader();
+
+        if (texturePath != null)
+        {
+            var textureLoader = new THREE.TextureLoader();
+            texture = textureLoader.load(texturePath);
+            texture.encoding = THREE.sRGBEncoding;
+            texture.flipY = false;
+            var modelMaterial = new THREE.MeshPhongMaterial({ map: texture, normalMap: null }); // ToDo: Normalmaps arent's working, need to be fixed.
+            if (normalPath != null)
+            {
+                normals = textureLoader.load(normalPath);   
+                normals.encoding = THREE.sRGBEncoding;
+                normals.flipY = false;             
+                modelMaterial.normalMap = normals;
+            }
+        }
+
+        modelLoader.load(
+            modelPath,
+            (function (obj){
+                model = obj.scene;
+
+                model.position.set(x, y, z);
+                model.rotation.x = rotX;
+                model.rotation.y = rotY;
+                model.rotation.z = rotZ;
+                model.scale.set(scaleX, scaleY, scaleZ);
+
+                model.material = modelMaterial;
+                scene.add(model);
+            })
+        );
+    }
+
     this.resize = function()
     {
         renderer.setSize(canvas.clientWidth, canvas.clientHeight);
@@ -76,8 +101,25 @@ function GameManager(canvas)
         camera.updateProjectionMatrix();
     }
 
+    // ToDo: Rewrite function more efficient.
     function setupCamera(){
-        
+        const fov = 95;
+        const aspect = 2;  // the canvas default
+        const near = 1;
+        const far = 1000;
+        //const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+        const size = 15;
+        const camera = new THREE.OrthographicCamera(-canvas.width/size, canvas.width/size, canvas.height/size, -canvas.height/size, near, far);
+        this.camera = camera;
+        camera.position.set(40, 25, -40);
+        camera.rotation.x = 0.71681469;
+        camera.rotation.y = 2.5;
+        camera.rotation.z = 5.83362938;
+        /*
+        camera.rotation.x = 3.75;
+        camera.rotation.y = 1;
+        camera.rotation.z = 0.4;
+        */
     }
 
     function setupLighting(){
@@ -86,8 +128,8 @@ function GameManager(canvas)
         const intensity = 1;
         const light = new THREE.DirectionalLight(color, intensity);
         light.castShadow = true;
-        light.position.set(0, 10, 10);
-        light.target.position.set(-4, 0, -4);
+        light.position.set(20, 25, -35);
+        light.target.position.set(0, 0, 0);
         scene.add(light);
         scene.add(light.target);
     
@@ -140,8 +182,14 @@ function GameManager(canvas)
     }
 
     function setupScene(){
-
+        this.renderer = new THREE.WebGLRenderer({ canvas });
+        this.renderer.outputEncoding = THREE.sRGBEncoding;
+        this.scene = new THREE.Scene();
+        loadMap();
+        loadPlayer();
     }
+
+    
 
     this.update = function()
     {
@@ -149,16 +197,7 @@ function GameManager(canvas)
         // Custom time function, could be used to calculate new positions, rotations etc.
         deltaTime = (new Date().getTime()) - startTime;
         deltaTime *= 0.001;
-        if (action.Forward == true)
-        {
-            // Rotate cubes out of the cubes list:
-            cubes.forEach((cube, ndx) => {
-                const speed = 1 + ndx * .1;
-                const rot = deltaTime * speed;
-                cube.rotation.x = rot;
-                cube.rotation.y = rot;
-            });
-        }
+
        renderer.render(scene, camera);
        frameEndTime = (new Date().getTime()) - frameStartTime;
        
@@ -170,7 +209,7 @@ function GameManager(canvas)
        //console.log("Action: Right, Status: " + action.Right);
        
       // Time test
-      console.log(deltaTime);
+      //console.log(deltaTime);
       //console.log("FPS: " + 1000/frameEndTime);
       
     checkToMove()
