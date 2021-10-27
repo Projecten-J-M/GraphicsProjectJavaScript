@@ -68,6 +68,8 @@ function GameManager(canvas)
             texture.encoding = THREE.sRGBEncoding;
             texture.flipY = false;
             var modelMaterial = new THREE.MeshPhongMaterial({ map: texture, normalMap: null }); // ToDo: Normalmaps arent's working, need to be fixed.
+
+
             if (normalPath != null)
             {
                 normals = textureLoader.load(normalPath);   
@@ -87,6 +89,8 @@ function GameManager(canvas)
                 model.rotation.y = rotY;
                 model.rotation.z = rotZ;
                 model.scale.set(scaleX, scaleY, scaleZ);
+                model.castShadow = true;
+                model.receiveShadow = true;
 
                 model.material = modelMaterial;
                 scene.add(model);
@@ -122,23 +126,72 @@ function GameManager(canvas)
         */
     }
 
+
+
     function setupLighting(){
         
         const color = 0xFFFFFF;
-        const intensity = 1;
+        const intensity = 2;
         const light = new THREE.DirectionalLight(color, intensity);
         light.castShadow = true;
-        light.position.set(20, 25, -35);
+        light.position.set(30, 10, -50);
         light.target.position.set(0, 0, 0);
         scene.add(light);
         scene.add(light.target);
+
+    }
+
+    function updatePosition(event) {
+        camera.rotation.order = 'YZX'
+        let { movementX, movementY } = event
+        let rotateSpeed = 0.002
+        player.rotation.y -= movementX * rotateSpeed
+        camera.rotation.x -= movementY * rotateSpeed
+        camera.rotation.x = Math.max(-Math.PI / 2, Math.min(camera.rotation.x, Math.PI / 2))
+        camera.rotation.order = 'XYZ'
+    }
+
+    // renderer.domElement.onclick = () =>
+    // renderer.domElement.requestPointerLock()
+    // document.addEventListener('pointerlockchange', lockChangeAlert, false);
+    // document.addEventListener('mozpointerlockchange', lockChangeAlert, false);
+
+    // function lockChangeAlert() {
+    //     if (document.pointerLockElement == renderer.domElement) {
+    //         document.addEventListener("mousemove", updatePosition, false)
+    //     } else {
+    //         document.removeEventListener("mousemove", updatePosition, false)
+    //     }
+    // }
     
+    function checkToMove() {
+        let moveSpeed = 0.05
+
+        if(action.Forward) {
+            player.position.x -= Math.sin(player.rotation.y) * moveSpeed;
+            player.position.z -= Math.cos(player.rotation.y) * moveSpeed;
+        }
+        if(action.Backward) {
+            player.position.x += Math.sin(player.rotation.y) * moveSpeed;
+            player.position.z += Math.cos(player.rotation.y) * moveSpeed;
+        }
+
+        if(action.Right) {
+            player.position.x += moveSpeed * Math.sin(rotation + Math.PI / 2);
+            player.position.z += moveSpeed * Math.cos(rotation + Math.PI / 2);
+        }
+        if(action.Left) {
+            player.position.x += moveSpeed * Math.sin(rotation - Math.PI / 2);
+            player.position.z += moveSpeed * Math.cos(rotation - Math.PI / 2);
+        }
+
     }
 
     function setupScene(){
         this.renderer = new THREE.WebGLRenderer({ canvas });
         this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.scene = new THREE.Scene();
+        this.renderer.shadowMap.enabled = true;
         loadMap();
         loadPlayer();
     }
@@ -165,6 +218,12 @@ function GameManager(canvas)
       // Time test
       //console.log(deltaTime);
       //console.log("FPS: " + 1000/frameEndTime);
+      
+    checkToMove()
+
     }
+
+
+
 
 }
