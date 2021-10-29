@@ -92,6 +92,9 @@ function GameManager(canvas)
                     }
                 });
 
+                    if ( node.isMesh ) { node.castShadow = true, node.receiveShadow = true; }
+        
+                } );
                 model.position.set(x, y, z);
                 model.rotation.x = rotX;
                 model.rotation.y = rotY;
@@ -131,14 +134,15 @@ function GameManager(canvas)
     function setupLighting(){
         
         const color = 0xFFFFFF;
-        const intensity = 2;
-        const light = new THREE.DirectionalLight(color, intensity);
+        const intensity = 1;
+        const light = new THREE.SpotLight(color, intensity);
         light.castShadow = true;
         light.position.set(30, 10, -50);
         light.target.position.set(0, 0, 0);
         scene.add(light);
         scene.add(light.target);
-
+        light.shadow.mapSize.width = 70000000;
+        light.shadow.mapSize.height = 70000000;
     }
 
     function updatePosition(event) {
