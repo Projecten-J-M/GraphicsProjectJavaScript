@@ -6,6 +6,7 @@ function GameManager(canvas)
     setupScene();
     setupLighting();
     setupCamera();
+    console.log(scene);
 
     this.handleInput = function(inputCode, isDown)
     {
@@ -46,7 +47,6 @@ function GameManager(canvas)
         loadGLTFObject("../assets/models/Hearse.glb", "../assets/textures/HearseDiffuse.png", "../assets/textures/HearseNormals.png", 13.4313, 1.94064, -24.6359);
         loadGLTFObject("../assets/models/Planks.glb", "../assets/textures/PlanksDiffuse.png", "../assets/textures/PlanksNormals.png");
         loadGLTFObject("../assets/models/Robot.glb", "../assets/textures/RobotDiffuse.png", "../assets/textures/RobotNormals.png", 22.9302, 0, -10.5714);
-        loadGLTFObject("../assets/models/Sides.glb");
         loadGLTFObject("../assets/models/SpinningTop.glb", "../assets/textures/SpinningTopDiffuse.png", "../assets/textures/SpinningTopNormals.png", 24.6155, 0.440388, -18.6914);
         loadGLTFObject("../assets/models/Stars.glb");
         loadGLTFObject("../assets/models/Stool.glb", "../assets/textures/StoolDiffuse.png", "../assets/textures/StoolNormals.png", 31.1626, 4.37695, -40.1877);
@@ -55,7 +55,7 @@ function GameManager(canvas)
     }
 
     function loadPlayer(){
-
+        this.player = new Player(this.scene, 4);
     }
 
     function loadGLTFObject(modelPath, texturePath = null, normalPath = null, x = 0, y = 0, z = 0, rotX = 0, rotY = 0, rotZ = 0, scaleX = 1, scaleY = 1, scaleZ = 1){        
@@ -81,8 +81,16 @@ function GameManager(canvas)
 
         modelLoader.load(
             modelPath,
-            (function (obj){
-                model = obj.scene;
+            (function (gltf){
+                model = gltf.scene;
+                gltf.scene.traverse( function( node )
+                {
+                    if ( node.isMesh )
+                    { 
+                        node.castShadow = true; 
+                        node.receiveShadow = true;
+                    }
+                });
 
                 model.position.set(x, y, z);
                 model.rotation.x = rotX;
@@ -107,23 +115,15 @@ function GameManager(canvas)
 
     // ToDo: Rewrite function more efficient.
     function setupCamera(){
-        const fov = 95;
-        const aspect = 2;  // the canvas default
-        const near = 1;
+        const near = 0.1;
         const far = 1000;
-        //const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-        const size = 15;
-        const camera = new THREE.OrthographicCamera(-canvas.width/size, canvas.width/size, canvas.height/size, -canvas.height/size, near, far);
+        const camera = new THREE.OrthographicCamera(-canvas.width, canvas.width, canvas.height, -canvas.height, near, far);
         this.camera = camera;
-        camera.position.set(40, 25, -40);
+        camera.zoom = 2;
+        camera.position.set(52.5, 25, -52.5);
         camera.rotation.x = 0.71681469;
         camera.rotation.y = 2.5;
         camera.rotation.z = 5.83362938;
-        /*
-        camera.rotation.x = 3.75;
-        camera.rotation.y = 1;
-        camera.rotation.z = 0.4;
-        */
     }
 
 
@@ -165,35 +165,39 @@ function GameManager(canvas)
     // }
     
     function checkToMove() {
-        let moveSpeed = 0.05
-
+        let moveX = 0;
+        let moveZ = 0;
         if(action.Forward) {
-            player.position.x -= Math.sin(player.rotation.y) * moveSpeed;
-            player.position.z -= Math.cos(player.rotation.y) * moveSpeed;
+            moveZ += 0.01;
         }
         if(action.Backward) {
-            player.position.x += Math.sin(player.rotation.y) * moveSpeed;
-            player.position.z += Math.cos(player.rotation.y) * moveSpeed;
+            moveZ -= 0.01;
         }
 
         if(action.Right) {
-            player.position.x += moveSpeed * Math.sin(rotation + Math.PI / 2);
-            player.position.z += moveSpeed * Math.cos(rotation + Math.PI / 2);
+            moveX -= 0.01;
         }
         if(action.Left) {
-            player.position.x += moveSpeed * Math.sin(rotation - Math.PI / 2);
-            player.position.z += moveSpeed * Math.cos(rotation - Math.PI / 2);
+            moveX += 0.01;
         }
-
+        player.move(camera, moveX, 0, moveZ);
     }
 
     function setupScene(){
         this.renderer = new THREE.WebGLRenderer({ canvas });
         this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.scene = new THREE.Scene();
+        this.scene.castShadow = true;
+        this.scene.receiveShadow = true;
         this.renderer.shadowMap.enabled = true;
         loadMap();
         loadPlayer();
+
+        var geo = new THREE.PlaneBufferGeometry(2000, 2000, 8, 8);
+        var mat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        var plane = new THREE.Mesh(geo, mat);
+
+        scene.add(plane);
     }
 
     
@@ -204,6 +208,8 @@ function GameManager(canvas)
         // Custom time function, could be used to calculate new positions, rotations etc.
         deltaTime = (new Date().getTime()) - startTime;
         deltaTime *= 0.001;
+
+        checkToMove();
 
        renderer.render(scene, camera);
        frameEndTime = (new Date().getTime()) - frameStartTime;
@@ -218,9 +224,6 @@ function GameManager(canvas)
       // Time test
       //console.log(deltaTime);
       //console.log("FPS: " + 1000/frameEndTime);
-      
-    checkToMove()
-
     }
 
 
